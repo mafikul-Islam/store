@@ -1,0 +1,79 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isSignedIn() { return request.auth != null; }
+    function isAdmin() { return isSignedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid)); }
+    function isValidId(id) { return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); }
+    function incoming() { return request.resource.data; }
+    function existing() { return resource.data; }
+
+    function isValidProduct(data) {
+        return data.keys().hasAll(['name', 'category', 'price', 'stock', 'image'])
+            && data.name is string && data.name.size() <= 200
+            && data.category is string && data.category.size() <= 100
+            && data.price is number
+            && data.stock is number
+            && data.image is string && data.image.size() <= 2000;
+    }
+
+    match /products/{productId} {
+      allow read: if true;
+      allow create: if (
+        isAdmin() &&
+        isValidId(productId) &&
+        isValidProduct(incoming()) &&
+        incoming().keys().size() == 5
+      );
+      allow update: if (
+        isValidId(productId) &&
+        isValidProduct(incoming()) && (
+          isAdmin() ||
+          (isSignedIn() && incoming().diff(existing()).affectedKeys().hasOnly(['stock']) && incoming().stock >= 0 && incoming().stock <= existing().stock)
+        )
+      );
+      allow delete: if isAdmin() && isValidId(productId);
+    }
+    
+    function isValidOrder(data) {
+        return data.keys().hasAll(['userId', 'userName', 'items', 'total', 'shippingAddress', 'status', 'createdAt'])
+            && data.userId is string && data.userId == request.auth.uid
+            && data.userName is string && data.userName.size() <= 100
+            && data.items is list && data.items.size() <= 20 && data.items.size() > 0
+            && data.total is number 
+            && data.shippingAddress is string && data.shippingAddress.size() <= 500
+            && data.status in ['pending', 'shipped', 'delivered']
+            && data.createdAt is number;
+    }
+
+    match /orders/{orderId} {
+      allow read: if isSignedIn() && (isAdmin() || existing().userId == request.auth.uid);
+      allow create: if (
+        isSignedIn() &&
+        isValidId(orderId) &&
+        isValidOrder(incoming()) &&
+        incoming().keys().size() == 7
+      );
+      allow update: if (
+        isAdmin() && 
+        isValidId(orderId) &&
+        isValidOrder(incoming()) &&
+        incoming().diff(existing()).affectedKeys().hasOnly(['status'])
+      );
+      allow delete: if false; 
+    }
+
+    match /users/{userId} {
+      allow read: if true;
+      allow write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    match /admins/{userId} {
+      allow read: if isSignedIn() && request.auth.uid == userId;
+      allow write: if request.auth.token.email == "admin@example.com";
+    }
+  }
+}

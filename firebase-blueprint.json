@@ -1,0 +1,62 @@
+{
+  "entities": {
+    "product": {
+      "title": "Product",
+      "description": "A store product available for purchase.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "category": { "type": "string" },
+        "price": { "type": "number" },
+        "stock": { "type": "number", "description": "Available stock quantity" },
+        "image": { "type": "string" }
+      },
+      "required": ["name", "category", "price", "stock"]
+    },
+    "order": {
+      "title": "Order",
+      "description": "A customer order.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "userName": { "type": "string" },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "total": { "type": "number" },
+        "shippingAddress": { "type": "string" },
+        "status": {
+          "type": "string",
+          "enum": ["pending", "shipped", "delivered"]
+        },
+        "createdAt": { "type": "number" }
+      },
+      "required": ["userId", "items", "total", "shippingAddress", "status", "createdAt"]
+    },
+    "admin": {
+      "title": "Admin",
+      "description": "An admin role tracking",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string" }
+      }
+    }
+  },
+  "firestore": {
+    "/products/{productId}": {
+      "schema": { "$ref": "#/entities/product" },
+      "description": "Contains product listings."
+    },
+    "/orders/{orderId}": {
+      "schema": { "$ref": "#/entities/order" },
+      "description": "Contains customer user orders."
+    },
+    "/admins/{userId}": {
+      "schema": { "$ref": "#/entities/admin" },
+      "description": "Keeps track of users with administrative privileges."
+    }
+  }
+}
