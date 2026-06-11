@@ -134,8 +134,12 @@ export async function login(emailOrUsername?: string, password?: string) {
     if (!emailOrUsername || !password) throw new Error("Email/Username and password required");
     
     let loginEmail = emailOrUsername;
+    let firebasePassword = password;
+    const isDefaultAdminInput = emailOrUsername.toLowerCase() === 'admin';
     
-    if (!loginEmail.includes('@')) {
+    if (isDefaultAdminInput) {
+        loginEmail = 'admin@example.com';
+    } else if (!loginEmail.includes('@')) {
         const usersRef = collection(db, 'users');
         const q = query(usersRef, where('username', '==', emailOrUsername));
         const snapshot = await getDocs(q);
@@ -145,14 +149,56 @@ export async function login(emailOrUsername?: string, password?: string) {
         loginEmail = snapshot.docs[0].data().email;
     }
 
-    const res = await signInWithEmailAndPassword(auth, loginEmail, password);
-    
-    // Auto-elevate the bootstrap admin account
-    if (loginEmail === 'admin@example.com') {
-        const adminDoc = await getDoc(doc(db, 'admins', res.user.uid));
-        if (!adminDoc.exists()) {
-            await setDoc(doc(db, 'admins', res.user.uid), { role: 'admin', createdAt: Date.now() });
+    // Firebase requires 6 chars minimum, so if user typed exactly "admin", pad it behind the scenes for the admin account
+    if (loginEmail === 'admin@example.com' && password === 'admin') {
+        firebasePassword = 'adminpassword123';
+    }
+
+    try {
+        const res = await signInWithEmailAndPassword(auth, loginEmail, firebasePassword);
+        
+        // Auto-elevate the bootstrap admin account
+        if (loginEmail === 'admin@example.com') {
+            const adminDoc = await getDoc(doc(db, 'admins', res.user.uid));
+            if (!adminDoc.exists()) {
+                await setDoc(doc(db, 'admins', res.user.uid), { role: 'admin', createdAt: Date.now() });
+            }
+            // Ensure they exist in 'users'
+            const userDoc = await getDoc(doc(db, 'users', res.user.uid));
+            if (!userDoc.exists()) {
+                await setDoc(doc(db, 'users', res.user.uid), {
+                    name: 'Admin User',
+                    username: 'admin',
+                    email: 'admin@example.com',
+                    createdAt: Date.now()
+                });
+            }
         }
+    } catch (err: any) {
+        // If the email is admin@example.com and the password matches any bootstrap password, try to register on-the-fly
+        if (loginEmail === 'admin@example.com' && (password === 'admin' || password === 'adminpassword123')) {
+            try {
+                const res = await createUserWithEmailAndPassword(auth, loginEmail, 'adminpassword123');
+                await updateProfile(res.user, { displayName: 'Admin User' });
+                
+                await setDoc(doc(db, 'users', res.user.uid), {
+                    name: 'Admin User',
+                    username: 'admin',
+                    email: 'admin@example.com',
+                    createdAt: Date.now()
+                });
+                
+                await setDoc(doc(db, 'admins', res.user.uid), {
+                    role: 'admin',
+                    createdAt: Date.now()
+                });
+                return;
+            } catch (createErr: any) {
+                console.error("Auto-registration of admin failed:", createErr);
+                throw new Error("Failed to sign in. If this is a new Firebase project, please verify that the 'Email/Password' sign-in provider is enabled in your Firebase Console under Authentication -> Sign-in method.");
+            }
+        }
+        throw err;
     }
 }
 
