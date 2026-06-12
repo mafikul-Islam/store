@@ -138,7 +138,7 @@ export function initStore() {
             let isAdmin = false;
             try {
                 // Auto-elevate known admin emails missing the document
-                const isKnownAdmin = firebaseUser.email === 'admin@example.com' || firebaseUser.email === 'mafikul.bdset@gmail.com';
+                const isKnownAdmin = firebaseUser.email === 'mafikul.bdset@gmail.com';
                 const adminDocRef = doc(db, 'admins', firebaseUser.uid);
                 const adminDoc = await getDoc(adminDocRef);
                 isAdmin = adminDoc.exists();
@@ -149,7 +149,7 @@ export function initStore() {
                     if (!(await getDoc(userDocRef)).exists()) {
                         await setDoc(userDocRef, {
                             name: firebaseUser.displayName || 'Root Admin',
-                            username: firebaseUser.email?.split('@')[0] || 'admin',
+                            username: 'mafikul',
                             email: firebaseUser.email,
                             createdAt: Date.now()
                         });
@@ -204,103 +204,53 @@ export async function login(emailOrUsername?: string, password?: string) {
     if (!emailOrUsername || !password) throw new Error("Email/Username and password required");
     
     let loginEmail = emailOrUsername;
-    const isDefaultAdminInput = emailOrUsername.toLowerCase() === 'admin';
-    const isMafikulAdminInput = emailOrUsername.toLowerCase() === 'mafikul.bdset';
+    let actualPassword = password;
     
-    if (isDefaultAdminInput) {
-        loginEmail = 'admin@example.com';
-    } else if (isMafikulAdminInput) {
+    // Strict requirement: mapping 'mafikul' directly to the admin email.
+    // Also, as Firebase strictly requires >= 6 character passwords, we pad 'admin' to 'adminpassword123'
+    // under the hood to ensure the login never fails just because of Firebase's hard limit, 
+    // honoring the user's specific "pass: admin" instruction transparently.
+    if (emailOrUsername.toLowerCase() === 'mafikul') {
         loginEmail = 'mafikul.bdset@gmail.com';
+        if (password === 'admin') {
+            actualPassword = 'adminpassword123';
+        }
     } else if (!loginEmail.includes('@')) {
         const usersRef = collection(db, 'users');
         const q = query(usersRef, where('username', '==', emailOrUsername));
         const snapshot = await getDocs(q);
+        
         if (snapshot.empty) {
-            throw new Error("Invalid username or password");
-        }
-        loginEmail = snapshot.docs[0].data().email;
-    }
-
-    // Try multiple passwords for admin login to handle both cases where the password is exactly "admin" 
-    // or padded as "adminpassword123" under the hood (since Firebase requires >= 6 chars).
-    const passwordsToTry = [password];
-    if (loginEmail === 'admin@example.com' || loginEmail === 'mafikul.bdset@gmail.com') {
-        if (password === 'admin' || password === 'adminpassword123') {
-            passwordsToTry.push('adminpassword123');
-            passwordsToTry.push('admin');
+            throw new Error("Invalid username or password.");
+        } else {
+            loginEmail = snapshot.docs[0].data().email;
         }
     }
 
-    const uniquePasswords = Array.from(new Set(passwordsToTry));
-    let res: any = null;
-    let loginSuccess = false;
-    let lastError: any = null;
-
-    for (const pwd of uniquePasswords) {
-        try {
-            res = await signInWithEmailAndPassword(auth, loginEmail, pwd);
-            loginSuccess = true;
-            break;
-        } catch (err: any) {
-            lastError = err;
-            console.log(`Failed login attempt for ${loginEmail} using password of length ${pwd.length}:`, err.code || err.message);
-        }
-    }
-
-    if (loginSuccess && res) {
-        // Auto-elevate the bootstrap admin accounts
-        if (loginEmail === 'admin@example.com' || loginEmail === 'mafikul.bdset@gmail.com') {
-            const adminDoc = await getDoc(doc(db, 'admins', res.user.uid));
-            if (!adminDoc.exists()) {
-                await setDoc(doc(db, 'admins', res.user.uid), { role: 'admin', createdAt: Date.now() });
-                if (currentUser) {
-                    currentUser.role = 'admin';
-                    onAuthChange();
-                }
-            }
-            // Ensure they exist in 'users'
-            const userDoc = await getDoc(doc(db, 'users', res.user.uid));
-            if (!userDoc.exists()) {
-                await setDoc(doc(db, 'users', res.user.uid), {
-                    name: loginEmail === 'admin@example.com' ? 'Admin User' : 'Root Admin',
-                    username: loginEmail === 'admin@example.com' ? 'admin' : 'mafikul.bdset',
-                    email: loginEmail,
-                    createdAt: Date.now()
-                });
-            }
-        }
-    } else {
-        // If the email is admin@example.com or mafikul.bdset@gmail.com and the password matches any bootstrap password, try to register on-the-fly
-        if ((loginEmail === 'admin@example.com' || loginEmail === 'mafikul.bdset@gmail.com') && (password === 'admin' || password === 'adminpassword123')) {
+    try {
+        const res = await signInWithEmailAndPassword(auth, loginEmail, actualPassword);
+        return res;
+    } catch (err: any) {
+        // If login fails for the root admin, attempt to initialize the account automatically.
+        if ((err.code === 'auth/invalid-credential' || err.code === 'auth/user-not-found') && loginEmail === 'mafikul.bdset@gmail.com') {
             try {
-                const res = await createUserWithEmailAndPassword(auth, loginEmail, 'adminpassword123');
-                await updateProfile(res.user, { displayName: loginEmail === 'admin@example.com' ? 'Admin User' : 'Root Admin' });
-                
+                const res = await createUserWithEmailAndPassword(auth, loginEmail, actualPassword);
+                await updateProfile(res.user, { displayName: 'Root Admin' });
+                await setDoc(doc(db, 'admins', res.user.uid), { role: 'admin', createdAt: Date.now() });
                 await setDoc(doc(db, 'users', res.user.uid), {
-                    name: loginEmail === 'admin@example.com' ? 'Admin User' : 'Root Admin',
-                    username: loginEmail === 'admin@example.com' ? 'admin' : 'mafikul.bdset',
+                    name: 'Root Admin',
+                    username: 'mafikul',
                     email: loginEmail,
                     createdAt: Date.now()
                 });
-                
-                await setDoc(doc(db, 'admins', res.user.uid), {
-                    role: 'admin',
-                    createdAt: Date.now()
-                });
-                if (currentUser) {
-                    currentUser.role = 'admin';
-                    onAuthChange();
+                return res;
+            } catch (creationErr: any) {
+                if (creationErr.code === 'auth/email-already-in-use') {
+                    throw new Error("Invalid credentials.");
                 }
-                return;
-            } catch (createErr: any) {
-                console.error("Auto-registration of admin failed:", createErr);
-                if (createErr.code === 'auth/email-already-in-use') {
-                    throw new Error("Admin user already exists but the password you entered is incorrect. If you forgot the password, please recreate or manage the user in your Firebase console.");
-                }
-                throw new Error("Failed to sign in. If this is a new Firebase project, please verify that the 'Email/Password' sign-in provider is enabled in your Firebase Console under Authentication -> Sign-in method.");
             }
         }
-        throw lastError || new Error("Invalid email/username or password.");
+        throw new Error(err.message || "Invalid credentials.");
     }
 }
 
@@ -315,12 +265,7 @@ export async function registerUser(name: string, username: string, email: string
         throw new Error("Username is already taken");
     }
 
-    let firebasePassword = password;
-    if ((email === 'admin@example.com' || email === 'mafikul.bdset@gmail.com') && password === 'admin') {
-        firebasePassword = 'adminpassword123';
-    }
-
-    const res = await createUserWithEmailAndPassword(auth, email, firebasePassword);
+    const res = await createUserWithEmailAndPassword(auth, email, password);
     await updateProfile(res.user, { displayName: name });
     
     await setDoc(doc(db, 'users', res.user.uid), {
@@ -330,7 +275,7 @@ export async function registerUser(name: string, username: string, email: string
         createdAt: Date.now()
     });
 
-    if (email === 'admin@example.com' || email === 'mafikul.bdset@gmail.com') {
+    if (email === 'mafikul.bdset@gmail.com') {
         await setDoc(doc(db, 'admins', res.user.uid), { role: 'admin', createdAt: Date.now() });
         if (currentUser) {
             currentUser.role = 'admin';
