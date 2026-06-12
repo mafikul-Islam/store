@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Navigation from '../components/Navigation';
 import { updateProduct } from '../lib/store';
@@ -61,9 +61,24 @@ export default function AdminEdit() {
                     image: imagePreview || `https://placehold.co/400x500?text=${encodeURIComponent(name)}`,
                     description: description || undefined
                 });
-                navigate('/products');
-            } catch (err) {
-                alert('Failed to update product');
+                
+                // Show floating success before navigating
+                const successDiv = document.createElement('div');
+                successDiv.className = 'fixed top-4 right-4 flex items-center gap-2 bg-green-500 text-white px-6 py-3 rounded-xl shadow-lg z-50 text-sm font-medium';
+                successDiv.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> Product Updated';
+                document.body.appendChild(successDiv);
+                setTimeout(() => {
+                    successDiv.remove();
+                    navigate('/admin');
+                }, 1500);
+
+            } catch (err: any) {
+                console.error('Failed to update product', err);
+                const errDiv = document.createElement('div');
+                errDiv.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-xl shadow-lg z-50 text-sm font-medium animate-bounce';
+                errDiv.innerText = err.message || 'Failed to update product';
+                document.body.appendChild(errDiv);
+                setTimeout(() => errDiv.remove(), 4000);
             }
         }
     };
@@ -112,13 +127,20 @@ export default function AdminEdit() {
                                             className="block w-full rounded-md border-0 py-2.5 px-3 text-gray-900 dark:text-white dark:bg-gray-800 shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-inset focus:ring-black dark:focus:ring-white sm:text-sm sm:leading-6"
                                         >
                                             <option value="" disabled>Select a category</option>
+                                            <option value="Clothing">Clothing</option>
                                             <option value="Electronics">Electronics</option>
                                             <option value="Computers">Computers</option>
                                             <option value="Accessories">Accessories</option>
                                             <option value="Audio">Audio</option>
                                             <option value="Wearables">Wearables</option>
                                             <option value="Home">Home</option>
+                                            <option value="Kitchen">Kitchen</option>
+                                            <option value="Stationery">Stationery</option>
                                             <option value="Apparel">Apparel</option>
+                                            <option value="Footwear">Footwear</option>
+                                            <option value="Sports">Sports</option>
+                                            <option value="Beauty">Beauty</option>
+                                            <option value="Health">Health</option>
                                             <option value="Uncategorized">Uncategorized</option>
                                         </select>
                                     </div>

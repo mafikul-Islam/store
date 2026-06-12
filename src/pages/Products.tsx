@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Navigation from '../components/Navigation';
 import { deleteProduct, isAdmin } from '../lib/store';
 import { useProducts, useAuth } from '../lib/hooks';
-import { Search, SlidersHorizontal, Edit2, Trash2, Plus, LayoutGrid, List } from 'lucide-react';
+import { Search, SlidersHorizontal, Edit2, Trash2, Plus, LayoutGrid, List, CheckCircle2 } from 'lucide-react';
 import { useCart } from '../components/CartProvider';
+import { motion, AnimatePresence } from 'motion/react';
 
 export default function Products() {
     const products = useProducts();
@@ -12,15 +13,25 @@ export default function Products() {
     const [categoryFilter, setCategoryFilter] = useState('All');
     const [sort, setSort] = useState('newest');
     const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+    const [showDeleteSuccess, setShowDeleteSuccess] = useState(false);
     const { isAuth, admin } = useAuth();
     const navigate = useNavigate();
     const { addToCart } = useCart();
 
-    const handleDelete = (e: React.MouseEvent, id: string) => {
+    const handleDelete = async (e: React.MouseEvent, id: string) => {
         e.preventDefault();
         e.stopPropagation();
-        if (window.confirm('Are you sure you want to delete this product?')) {
-            deleteProduct(id);
+        try {
+            await deleteProduct(id);
+            setShowDeleteSuccess(true);
+            setTimeout(() => setShowDeleteSuccess(false), 2000);
+        } catch (err: any) {
+            console.error('Failed to delete product', err);
+            const errDiv = document.createElement('div');
+            errDiv.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-xl shadow-lg z-50 text-sm font-medium animate-bounce';
+            errDiv.innerText = err.message || 'Failed to delete product';
+            document.body.appendChild(errDiv);
+            setTimeout(() => errDiv.remove(), 4000);
         }
     };
 
@@ -49,7 +60,25 @@ export default function Products() {
     });
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex flex-col transition-colors duration-200">
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex flex-col transition-colors duration-200 relative">
+            <AnimatePresence>
+                {showDeleteSuccess && (
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.8 }}
+                        className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
+                    >
+                        <div className="bg-white dark:bg-gray-900 rounded-3xl p-10 flex flex-col items-center justify-center shadow-2xl border border-gray-100 dark:border-gray-800">
+                            <div className="rounded-full bg-green-100 dark:bg-green-900/30 p-4 mb-4">
+                                <CheckCircle2 className="h-12 w-12 text-green-600 dark:text-green-400" />
+                            </div>
+                            <h2 className="text-xl font-bold text-gray-900 dark:text-white">Product Deleted</h2>
+                            <p className="mt-2 text-sm text-gray-500 dark:text-gray-400 text-center">The product has been successfully removed from the store.</p>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
             <Navigation />
             
             <main className="flex-1">
@@ -123,7 +152,7 @@ export default function Products() {
                         </div>
                     </div>
 
-                    {isAuth && (
+                    {admin && (
                         <div className="mb-8 flex justify-end">
                             <Link to="/admin/add" className="inline-flex items-center gap-2 rounded-full bg-black dark:bg-white px-6 py-2.5 text-sm font-semibold text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors shadow-sm">
                                 <Plus className="h-4 w-4" />
@@ -139,7 +168,7 @@ export default function Products() {
                                 const inStock = product.stock > 0;
                                 return (
                                     <div key={product.id} className={`group relative flex bg-white dark:bg-gray-900 overflow-hidden rounded-2xl border border-gray-100 dark:border-gray-800 hover:shadow-xl dark:hover:shadow-white/5 transition-all duration-300 ${viewMode === 'list' ? 'flex-row h-48 sm:h-64' : 'flex-col'}`}>
-                                        <div className={`${viewMode === 'list' ? 'w-48 sm:w-64 h-full flex-shrink-0' : 'aspect-[4/5]'} bg-gray-100 dark:bg-gray-800 overflow-hidden relative`}>
+                                        <div className={`${viewMode === 'list' ? 'w-48 sm:w-64 h-full flex-shrink-0' : 'aspect-square'} p-6 flex items-center justify-center bg-gray-50 dark:bg-gray-800 overflow-hidden relative`}>
                                         <Link 
                                             to={`/product/${product.id}`}
                                             className="block h-full w-full"
@@ -147,7 +176,7 @@ export default function Products() {
                                             <img 
                                                 src={product.image} 
                                                 alt={product.name} 
-                                                className={`h-full w-full object-cover object-center transition-transform duration-700 group-hover:scale-105 ${!inStock ? 'opacity-50 grayscale' : ''}`}
+                                                className={`h-full w-full object-contain object-center transition-transform duration-700 group-hover:scale-105 ${!inStock ? 'opacity-50 grayscale' : ''}`}
                                                 onError={(e) => {
                                                     (e.target as HTMLImageElement).src = `https://placehold.co/400x500?text=${encodeURIComponent(product.name)}`;
                                                 }}
@@ -195,7 +224,7 @@ export default function Products() {
                                                         {inStock ? "Shop Now" : "Out of Stock"}
                                                     </button>
 
-                                                    {isAuth && (
+                                                    {admin && (
                                                         <div className="flex items-center gap-2 w-full sm:w-auto">
                                                             <Link to={`/admin/edit/${product.id}`} className="flex-1 inline-flex items-center justify-center gap-2 rounded-full bg-gray-50 dark:bg-gray-800 px-4 py-2 text-sm font-semibold text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors border border-gray-200 dark:border-gray-700">
                                                                 <Edit2 className="h-4 w-4" />

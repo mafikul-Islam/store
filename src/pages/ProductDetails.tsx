@@ -43,12 +43,12 @@ export default function ProductDetails() {
 
                     <div className="lg:grid lg:grid-cols-2 lg:gap-x-12 xl:gap-x-16">
                         {/* Product Image */}
-                        <div className="mb-10 lg:mb-0">
-                            <div className="aspect-[4/5] w-full overflow-hidden rounded-2xl bg-gray-100 dark:bg-gray-900 border border-black/5 dark:border-white/5 shadow-sm">
+                        <div className="mb-10 lg:mb-0 flex justify-center lg:justify-start">
+                            <div className="w-full max-w-md aspect-square overflow-hidden rounded-3xl bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-sm relative group p-8 flex items-center justify-center">
                                 <img
                                     src={product.image}
                                     alt={product.name}
-                                    className="h-full w-full object-cover object-center"
+                                    className="h-full w-full object-contain object-center transition-transform duration-700 group-hover:scale-105"
                                 />
                             </div>
                         </div>

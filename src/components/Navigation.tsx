@@ -1,3 +1,4 @@
+import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ShoppingCart, LogOut, Package, User, Sun, Moon } from 'lucide-react';
 import { logout } from '../lib/store';

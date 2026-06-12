@@ -3,7 +3,8 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import Navigation from '../components/Navigation';
 import { updateProduct, deleteProduct, Product } from '../lib/store';
 import { useProducts, useAuth } from '../lib/hooks';
-import { Edit2, Trash2, Plus } from 'lucide-react';
+import { Edit2, Trash2, Plus, CheckCircle2 } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 
 export function AdminTabs() {
     const location = useLocation();
@@ -41,6 +42,8 @@ export default function AdminInventory() {
     const globalProducts = useProducts();
     const { isAuth, admin } = useAuth();
     const [products, setProducts] = useState<Product[]>([]);
+    const [showDeleteSuccess, setShowDeleteSuccess] = useState(false);
+    const [itemDeleting, setItemDeleting] = useState<string | null>(null);
 
     useEffect(() => {
         if (admin === false) {
@@ -84,13 +87,45 @@ export default function AdminInventory() {
     };
 
     const handleDelete = async (id: string) => {
-        if (window.confirm('Are you sure you want to delete this product?')) {
+        setItemDeleting(id);
+        try {
             await deleteProduct(id);
+            setProducts(products.filter(p => p.id !== id));
+            setShowDeleteSuccess(true);
+            setTimeout(() => setShowDeleteSuccess(false), 2000);
+        } catch (err: any) {
+            console.error('Failed to delete product', err);
+            setShowDeleteSuccess(false);
+            const errDiv = document.createElement('div');
+            errDiv.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-xl shadow-lg z-50 text-sm font-medium animate-bounce';
+            errDiv.innerText = err.message || 'Failed to delete product';
+            document.body.appendChild(errDiv);
+            setTimeout(() => errDiv.remove(), 4000);
+        } finally {
+            setItemDeleting(null);
         }
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex flex-col transition-colors duration-200">
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex flex-col transition-colors duration-200 relative">
+            <AnimatePresence>
+                {showDeleteSuccess && (
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.8 }}
+                        className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
+                    >
+                        <div className="bg-white dark:bg-gray-900 rounded-3xl p-10 flex flex-col items-center justify-center shadow-2xl border border-gray-100 dark:border-gray-800">
+                            <div className="rounded-full bg-green-100 dark:bg-green-900/30 p-4 mb-4">
+                                <CheckCircle2 className="h-12 w-12 text-green-600 dark:text-green-400" />
+                            </div>
+                            <h2 className="text-xl font-bold text-gray-900 dark:text-white">Product Deleted</h2>
+                            <p className="mt-2 text-sm text-gray-500 dark:text-gray-400 text-center">The product has been successfully removed from the store.</p>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
             <Navigation />
             <main className="flex-1 py-12">
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -187,7 +222,11 @@ export default function AdminInventory() {
                                                                 <Edit2 className="h-4 w-4" />
                                                                 <span className="sr-only">Edit</span>
                                                             </Link>
-                                                            <button onClick={() => handleDelete(product.id)} className="text-red-500 hover:text-red-700 dark:hover:text-red-400">
+                                                            <button 
+                                                                onClick={() => handleDelete(product.id)} 
+                                                                disabled={itemDeleting === product.id}
+                                                                className={`text-red-500 hover:text-red-700 dark:hover:text-red-400 ${itemDeleting === product.id ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                                            >
                                                                 <Trash2 className="h-4 w-4" />
                                                                 <span className="sr-only">Delete</span>
                                                             </button>
