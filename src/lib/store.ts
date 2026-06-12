@@ -1,6 +1,6 @@
 import { collection, doc, getDoc, getDocs, setDoc, deleteDoc, updateDoc, onSnapshot, query, orderBy, where, serverTimestamp } from 'firebase/firestore';
 import { db, auth } from './firebase';
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut, updateProfile } from 'firebase/auth';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, updateProfile } from 'firebase/auth';
 
 export interface Product {
     id: string;
@@ -195,11 +195,6 @@ export function initStore() {
 }
 
 // --- Auth --- //
-export async function loginWithGoogle() {
-    const provider = new GoogleAuthProvider();
-    await signInWithPopup(auth, provider);
-}
-
 export async function login(emailOrUsername?: string, password?: string) {
     if (!emailOrUsername || !password) throw new Error("Email/Username and password required");
     
