@@ -1,0 +1,93 @@
+============================================================
+           PHP ECO-COMMERCE STORE - SETUP MANUAL
+============================================================
+
+This manual will guide you through setting up the store on 
+your local machine using XAMPP.
+
+------------------------------------------------------------
+1. Prerequisites
+------------------------------------------------------------
+- Install XAMPP on your computer.
+- Ensure the Apache and MySQL modules are running from the 
+  XAMPP Control Panel.
+
+------------------------------------------------------------
+2. Deploying the Application
+------------------------------------------------------------
+1. Open your XAMPP installation directory (usually `C:\xampp`).
+2. Navigate to the `htdocs` folder (`C:\xampp\htdocs`).
+3. Copy the entire `php_export` folder into `htdocs`.
+   * You can rename this folder to your project name, e.g., `store`.
+
+------------------------------------------------------------
+3. Database Setup
+------------------------------------------------------------
+1. Open your web browser and go to `http://localhost/phpmyadmin/`
+2. Click on "New" to create a new database.
+3. Name the database `ecommerce_db` and click "Create".
+4. Select the newly created `ecommerce_db` database on the left bar.
+5. Click on the "Import" tab at the top.
+6. Click "Choose File" and select the `database.sql` file located 
+   inside your project folder (e.g., `C:\xampp\htdocs\php_export\database.sql`).
+7. Scroll down and click "Import" (or "Go"). This will create 
+   all the necessary tables (users, products, orders, etc.).
+
+------------------------------------------------------------
+4. Running the Application
+------------------------------------------------------------
+1. Open your web browser.
+2. Go to `http://localhost/php_export` (or whatever you 
+   named the folder in htdocs).
+3. The store should now be live and running on your local machine.
+
+------------------------------------------------------------
+5. Setup Admin Account Login
+------------------------------------------------------------
+Because we're using secure plain-text passwords for easy class 
+review, you can easily create an admin account using the built-in 
+reset tool.
+
+[!] SECURITY FEATURE: Overriding user accounts via the setup 
+    tool is protected from unauthorized access. Users cannot 
+    simply go to /reset_admin.php. They MUST provide the correct 
+    setup key in the URL.
+
+1. Go to: `http://localhost/php_export/reset_admin.php?key=admin123`
+
+   (Note: To change this key, edit line 3 in `reset_admin.php` where 
+   it says `$_GET['key'] !== 'admin123'`).
+
+2. Under "Step 1", you can click "Delete All Admin Users" if 
+   you want to wipe any corrupt admins from the database.
+3. Under "Step 2", fill in the form:
+   - Username: admin
+   - Email: your_email@student.domain
+   - Password: admin
+4. Click "Create Admin".
+5. Go back to login (`http://localhost/php_export/login.php`) 
+   and log in with those credentials to access the Dashboard.
+
+* Alternatively, you can use the `create_user.php` file if you 
+just want to register a normal user right away.
+
+------------------------------------------------------------
+6. Uploading Images (For Admin Dashboard)
+------------------------------------------------------------
+To use the drag & drop file upload for products, ensure that 
+the `uploads` directory is writable. The app will attempt to 
+create this folder automatically in the root of the project,
+but if you have permission issues in Windows, you can create 
+a folder named `uploads` inside your `php_export` directory 
+manually.
+
+------------------------------------------------------------
+7. Troubleshooting
+------------------------------------------------------------
+- "Database Connection Failed": Make sure MySQL is running in XAMPP. 
+  Check that the database name in `db_connect.php` is exactly 
+  the same as the one you created in phpMyAdmin. Default MySQL 
+  user in XAMPP is 'root' with no password, which should already 
+  match our settings.
+
+Enjoy your Premium Store!

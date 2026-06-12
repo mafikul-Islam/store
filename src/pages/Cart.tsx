@@ -17,7 +17,7 @@ export default function Cart() {
                     {cart.length === 0 ? (
                         <div className="text-center py-16 bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800">
                             <p className="text-gray-500 dark:text-gray-400 mb-6">Your cart is currently empty.</p>
-                            <Link to="/products" className="inline-flex items-center justify-center rounded-full bg-black dark:bg-white px-8 py-3 text-sm font-semibold text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors">
+                            <Link to="/products" className="inline-flex items-center justify-center rounded-full bg-black dark:bg-white px-8 py-3 text-sm font-semibold text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors active:scale-95">
                                 Browse Products
                             </Link>
                         </div>
@@ -41,7 +41,7 @@ export default function Cart() {
                                                         <h3>
                                                             <Link to={`/product/${item.product.id}`} className="hover:underline">{item.product.name}</Link>
                                                         </h3>
-                                                        <p className="ml-4">${(item.product.price * item.quantity).toFixed(2)}</p>
+                                                        <p className="ml-4"><span className="text-[1.2em] font-medium mr-[1px] inline-block -translate-y-[0.05em]">৳</span>{(item.product.price * item.quantity).toFixed(2)}</p>
                                                     </div>
                                                     <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{item.product.category}</p>
                                                 </div>
@@ -67,13 +67,13 @@ export default function Cart() {
                             <div className="border-t border-gray-200 dark:border-gray-800 mt-8 pt-8">
                                 <div className="flex justify-between text-base font-medium text-gray-900 dark:text-white mb-4">
                                     <p>Subtotal</p>
-                                    <p>${cartTotal.toFixed(2)}</p>
+                                    <p><span className="text-[1.2em] font-medium mr-[1px] inline-block -translate-y-[0.05em]">৳</span>{cartTotal.toFixed(2)}</p>
                                 </div>
                                 <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">Shipping and taxes calculated at checkout.</p>
                                 <div className="mt-6 flex gap-4">
                                     <button
                                         onClick={() => navigate('/checkout')}
-                                        className="flex-1 flex items-center justify-center gap-2 rounded-full bg-black dark:bg-white px-6 py-4 text-base font-semibold text-white dark:text-black shadow-sm hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors"
+                                        className="flex-1 flex items-center justify-center gap-2 rounded-full bg-black dark:bg-white px-6 py-4 text-base font-semibold text-white dark:text-black shadow-sm hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors active:scale-95"
                                     >
                                         Checkout <ArrowRight size={18} />
                                     </button>

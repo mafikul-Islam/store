@@ -71,7 +71,7 @@ export default function Checkout() {
                         </div>
                         <h2 className="text-3xl font-serif font-bold text-gray-900 dark:text-white mb-2">Order Confirmed!</h2>
                         <p className="text-gray-500 dark:text-gray-400 mb-8">Thank you for your purchase. We've received your order and will ship it shortly.</p>
-                        <Link to="/" className="inline-flex w-full items-center justify-center rounded-full bg-black dark:bg-white px-6 py-3 text-sm font-semibold text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors">
+                        <Link to="/" className="inline-flex w-full items-center justify-center rounded-full bg-black dark:bg-white px-6 py-3 text-sm font-semibold text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors active:scale-95">
                             Return Home
                         </Link>
                     </div>
@@ -136,9 +136,9 @@ export default function Checkout() {
                             <div className="border-t border-gray-200 dark:border-gray-800 pt-6">
                                 <div className="flex justify-between text-base font-medium text-gray-900 dark:text-white mb-6">
                                     <p>Total to Pay</p>
-                                    <p>${cartTotal.toFixed(2)}</p>
+                                    <p><span className="text-[1.2em] font-medium mr-[1px] inline-block -translate-y-[0.05em]">৳</span>{cartTotal.toFixed(2)}</p>
                                 </div>
-                                <button type="submit" className="w-full flex justify-center rounded-full bg-black dark:bg-white px-4 py-3 text-sm font-semibold text-white dark:text-black shadow-sm hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors">
+                                <button type="submit" className="w-full flex justify-center rounded-full bg-black dark:bg-white px-4 py-3 text-sm font-semibold text-white dark:text-black shadow-sm hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors active:scale-95">
                                     Place Order
                                 </button>
                             </div>

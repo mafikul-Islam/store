@@ -50,12 +50,15 @@ export default function Navigation() {
                     {isAuth ? (
                         <>
                             {admin && (
-                                <Link to="/admin" className={`${linkBaseClass} ${location.pathname.startsWith('/admin') ? activeClass : inactiveClass}`}>
-                                    Admin Dashboard
-                                </Link>
+                                <>
+                                    <Link to="/admin" className={`${linkBaseClass} ${location.pathname.startsWith('/admin') ? activeClass : inactiveClass}`}>
+                                        Admin Dashboard
+                                    </Link>
+                                    <div className="h-4 w-px bg-gray-200 dark:bg-gray-800 mx-2 hidden md:block" />
+                                </>
                             )}
                             <div className="flex items-center gap-2">
-                                <span className="text-sm font-medium text-gray-700 dark:text-gray-300 hidden sm:inline-block">Hi, {user?.name.split(' ')[0]}</span>
+                                <span className="text-sm font-medium text-gray-900 dark:text-white hidden sm:inline-block">Hi, {user?.name.split(' ')[0]}</span>
                                 <button onClick={handleLogout} className="flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400 transition-colors ml-2 sm:ml-0">
                                     <LogOut className="h-4 w-4" />
                                     <span className="hidden md:inline">Logout</span>

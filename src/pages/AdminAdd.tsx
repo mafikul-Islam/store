@@ -192,11 +192,11 @@ export default function AdminAdd() {
 
                                 <div>
                                     <label htmlFor="price" className="block text-sm font-medium leading-6 text-gray-900 dark:text-gray-300">
-                                        Price (USD)
+                                        Price (৳)
                                     </label>
                                     <div className="relative mt-2 rounded-md shadow-sm">
                                         <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                                            <span className="text-gray-500 sm:text-sm">$</span>
+                                            <span className="text-gray-500 sm:text-sm">৳</span>
                                         </div>
                                         <input
                                             type="number"
@@ -295,7 +295,7 @@ export default function AdminAdd() {
                                 <button
                                     type="submit"
                                     disabled={isSubmitting}
-                                    className="rounded-md bg-black dark:bg-white px-8 py-2.5 text-sm font-semibold text-white dark:text-black shadow-sm hover:bg-gray-800 dark:hover:bg-gray-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black dark:focus-visible:outline-white transition-colors disabled:opacity-50"
+                                    className="rounded-md bg-black dark:bg-white px-8 py-2.5 text-sm font-semibold text-white dark:text-black shadow-sm hover:bg-gray-800 dark:hover:bg-gray-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black dark:focus-visible:outline-white transition-colors disabled:opacity-50 active:scale-95"
                                 >
                                     {isSubmitting ? 'Publishing...' : 'Publish Product'}
                                 </button>

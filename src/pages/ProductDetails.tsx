@@ -13,10 +13,13 @@ export default function ProductDetails() {
     const { addToCart } = useCart();
     const navigate = useNavigate();
 
+    const [quantity, setQuantity] = useState(1);
+
     useEffect(() => {
         if (id && globalProducts.length > 0) {
             const foundProduct = globalProducts.find(p => p.id === id);
             setProduct(foundProduct || null);
+            setQuantity(1);
         }
     }, [id, globalProducts]);
 
@@ -62,8 +65,7 @@ export default function ProductDetails() {
                                 <h1 className="font-serif text-4xl sm:text-5xl font-bold tracking-tight text-gray-900 dark:text-white mb-4">
                                     {product.name}
                                 </h1>
-                                <p className="text-3xl tracking-tight text-gray-900 dark:text-white font-medium">
-                                    ${product.price.toFixed(2)}
+                                <p className="text-3xl tracking-tight text-gray-900 dark:text-white font-medium"><span className="text-[1.2em] font-medium mr-[1px] inline-block -translate-y-[0.05em]">৳</span>{product.price.toFixed(2)}
                                 </p>
                             </div>
 
@@ -81,21 +83,41 @@ export default function ProductDetails() {
                                         {product.stock > 0 ? `${product.stock} in stock` : 'Out of stock'}
                                     </span>
                                 </div>
+                                <div className="flex items-center justify-between mb-4">
+                                    <h3 className="text-sm font-medium text-gray-900 dark:text-white">Quantity</h3>
+                                    <div className="flex items-center space-x-3">
+                                        <button 
+                                            onClick={() => setQuantity(q => Math.max(1, q - 1))}
+                                            disabled={product.stock === 0 || quantity <= 1}
+                                            className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition active:scale-95"
+                                        >
+                                            -
+                                        </button>
+                                        <span className="text-gray-900 dark:text-white font-medium w-4 text-center">{quantity}</span>
+                                        <button 
+                                            onClick={() => setQuantity(q => (q < product.stock ? q + 1 : q))}
+                                            disabled={product.stock === 0 || quantity >= product.stock}
+                                            className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition active:scale-95"
+                                        >
+                                            +
+                                        </button>
+                                    </div>
+                                </div>
                                 
                                 <div className="flex flex-col sm:flex-row gap-4">
                                     <button
-                                        className="flex-1 flex items-center justify-center gap-2 rounded-full bg-white dark:bg-gray-950 px-8 py-4 text-sm font-semibold text-gray-900 dark:text-white shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-700 hover:bg-gray-50 dark:hover:bg-gray-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                                        className="flex-1 flex items-center justify-center gap-2 rounded-full bg-white dark:bg-gray-950 px-8 py-4 text-sm font-semibold text-gray-900 dark:text-white shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-700 hover:bg-gray-50 dark:hover:bg-gray-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 active:scale-95"
                                         disabled={product.stock === 0}
-                                        onClick={() => addToCart(product)}
+                                        onClick={() => addToCart(product, quantity)}
                                     >
                                         <ShoppingCart size={18} />
                                         {product.stock > 0 ? "Add to Cart" : "Out of Stock"}
                                     </button>
                                     <button
-                                        className="flex-1 flex items-center justify-center gap-2 rounded-full bg-black dark:bg-white px-8 py-4 text-sm font-semibold text-white dark:text-black shadow-sm hover:bg-gray-800 dark:hover:bg-gray-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                                        className="flex-1 flex items-center justify-center gap-2 rounded-full bg-black dark:bg-white px-8 py-4 text-sm font-semibold text-white dark:text-black shadow-sm hover:bg-gray-800 dark:hover:bg-gray-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 active:scale-95"
                                         disabled={product.stock === 0}
                                         onClick={() => {
-                                            addToCart(product);
+                                            addToCart(product, quantity);
                                             navigate('/cart');
                                         }}
                                     >
@@ -111,7 +133,7 @@ export default function ProductDetails() {
                                     </div>
                                     <div>
                                         <h4 className="text-sm font-medium text-gray-900 dark:text-white">Free Shipping</h4>
-                                        <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">On orders over $100</p>
+                                        <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">On orders over <span className="text-[1.2em] font-medium mr-[1px] inline-block -translate-y-[0.05em]">৳</span>100</p>
                                     </div>
                                 </div>
                                 <div className="flex items-start gap-3">

@@ -111,7 +111,7 @@ export default function Products() {
                             <select
                                 value={categoryFilter}
                                 onChange={(e) => setCategoryFilter(e.target.value)}
-                                className="block w-full sm:w-40 rounded-full border-0 py-2.5 px-4 pr-10 text-gray-900 dark:text-white shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-inset focus:ring-black dark:focus:ring-white sm:text-sm sm:leading-6 bg-white dark:bg-gray-800"
+                                className="block w-full sm:w-40 rounded-full border-0 py-2.5 px-4 pr-10 text-gray-900 dark:text-white shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-inset focus:ring-black dark:focus:ring-white sm:text-sm sm:leading-6 bg-white dark:bg-gray-800 active:scale-95"
                             >
                                 {categories.map(cat => (
                                     <option key={cat} value={cat}>{cat}</option>
@@ -125,7 +125,7 @@ export default function Products() {
                             <select
                                 value={sort}
                                 onChange={(e) => setSort(e.target.value)}
-                                className="block w-full sm:w-48 rounded-full border-0 py-2.5 px-4 pr-10 text-gray-900 dark:text-white shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-inset focus:ring-black dark:focus:ring-white sm:text-sm sm:leading-6 bg-white dark:bg-gray-800"
+                                className="block w-full sm:w-48 rounded-full border-0 py-2.5 px-4 pr-10 text-gray-900 dark:text-white shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-inset focus:ring-black dark:focus:ring-white sm:text-sm sm:leading-6 bg-white dark:bg-gray-800 active:scale-95"
                             >
                                 <option value="newest">Newest Arrivals</option>
                                 <option value="price-low">Price: Low to High</option>
@@ -154,7 +154,7 @@ export default function Products() {
 
                     {admin && (
                         <div className="mb-8 flex justify-end">
-                            <Link to="/admin/add" className="inline-flex items-center gap-2 rounded-full bg-black dark:bg-white px-6 py-2.5 text-sm font-semibold text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors shadow-sm">
+                            <Link to="/admin/add" className="inline-flex items-center gap-2 rounded-full bg-black dark:bg-white px-6 py-2.5 text-sm font-semibold text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors shadow-sm active:scale-95">
                                 <Plus className="h-4 w-4" />
                                 Post New Product
                             </Link>
@@ -196,7 +196,7 @@ export default function Products() {
                                                             {product.name}
                                                         </Link>
                                                     </h3>
-                                                    <p className={`font-medium text-gray-900 dark:text-white ${viewMode === 'list' ? 'text-lg md:text-xl' : 'text-base'}`}>${product.price.toFixed(2)}</p>
+                                                    <p className={`font-medium text-gray-900 dark:text-white ${viewMode === 'list' ? 'text-lg md:text-xl' : 'text-base'}`}><span className="text-[1.2em] font-medium mr-[1px] inline-block -translate-y-[0.05em]">৳</span>{product.price.toFixed(2)}</p>
                                                 </div>
                                                 <div className="mb-2">
                                                     <span className="inline-flex items-center rounded-md bg-gray-50 dark:bg-gray-800 px-2 py-1 text-xs font-medium text-gray-600 dark:text-gray-300 ring-1 ring-inset ring-gray-500/10 dark:ring-white/10">
@@ -219,14 +219,14 @@ export default function Products() {
                                                             navigate('/cart');
                                                         }}
                                                         disabled={!inStock}
-                                                        className="w-full flex justify-center items-center gap-2 rounded-full bg-black dark:bg-white px-4 py-2 text-sm font-semibold text-white dark:text-black shadow-sm hover:bg-gray-800 dark:hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                                        className="w-full flex justify-center items-center gap-2 rounded-full bg-black dark:bg-white px-4 py-2 text-sm font-semibold text-white dark:text-black shadow-sm hover:bg-gray-800 dark:hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors active:scale-95"
                                                     >
                                                         {inStock ? "Shop Now" : "Out of Stock"}
                                                     </button>
 
                                                     {admin && (
                                                         <div className="flex items-center gap-2 w-full sm:w-auto">
-                                                            <Link to={`/admin/edit/${product.id}`} className="flex-1 inline-flex items-center justify-center gap-2 rounded-full bg-gray-50 dark:bg-gray-800 px-4 py-2 text-sm font-semibold text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors border border-gray-200 dark:border-gray-700">
+                                                            <Link to={`/admin/edit/${product.id}`} className="flex-1 inline-flex items-center justify-center gap-2 rounded-full bg-gray-50 dark:bg-gray-800 px-4 py-2 text-sm font-semibold text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors border border-gray-200 dark:border-gray-700 active:scale-95">
                                                                 <Edit2 className="h-4 w-4" />
                                                                 <span>Edit</span>
                                                             </Link>
@@ -247,7 +247,7 @@ export default function Products() {
                             <Search className="mx-auto h-12 w-12 text-gray-300 dark:text-gray-600 mb-4" />
                             <h3 className="text-sm font-semibold text-gray-900 dark:text-white">No products found</h3>
                             <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">We couldn't find anything matching "{searchTerm}".</p>
-                            <button onClick={() => setSearchTerm('')} className="mt-6 inline-flex items-center rounded-full bg-white dark:bg-gray-800 px-4 py-2 text-sm font-semibold text-gray-900 dark:text-white shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                            <button onClick={() => setSearchTerm('')} className="mt-6 inline-flex items-center rounded-full bg-white dark:bg-gray-800 px-4 py-2 text-sm font-semibold text-gray-900 dark:text-white shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors active:scale-95">
                                 Clear search
                             </button>
                         </div>

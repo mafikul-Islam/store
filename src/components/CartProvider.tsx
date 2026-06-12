@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { Product } from '../lib/store';
+import { toast } from 'sonner';
 
 export interface CartItem {
     product: Product;
@@ -46,6 +47,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
             }
             return [...prev, { product, quantity }];
         });
+        toast.success(`${product.name} added to cart!`);
     };
 
     const removeFromCart = (productId: string) => {

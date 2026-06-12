@@ -96,10 +96,10 @@ export default function Home() {
                         Discover our handpicked collection of premium products, designed to elevate your everyday routines with uncompromised quality and aesthetics.
                     </motion.p>
                     <motion.div variants={itemVariants} className="flex flex-col sm:flex-row items-center gap-4">
-                        <Link to="/products" className="inline-flex items-center justify-center rounded-full bg-black dark:bg-white px-8 py-3.5 text-sm font-semibold text-white dark:text-black shadow-sm hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors w-full sm:w-auto">
+                        <Link to="/products" className="inline-flex items-center justify-center rounded-full bg-black dark:bg-white px-8 py-3.5 text-sm font-semibold text-white dark:text-black shadow-sm hover:bg-gray-800 dark:hover:bg-gray-200 hover:scale-105 hover:-translate-y-1 hover:shadow-lg transition-all duration-300 w-full sm:w-auto active:scale-95">
                             Shop Collection
                         </Link>
-                        <a href="#featured" className="inline-flex items-center justify-center rounded-full bg-white dark:bg-gray-950 px-8 py-3.5 text-sm font-semibold text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors w-full sm:w-auto backdrop-blur-sm">
+                        <a href="#featured" className="inline-flex items-center justify-center rounded-full bg-white dark:bg-gray-900 px-8 py-3.5 text-sm font-semibold text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 hover:scale-105 hover:-translate-y-1 hover:shadow-lg transition-all duration-300 w-full sm:w-auto backdrop-blur-sm active:scale-95">
                             View Featured
                         </a>
                     </motion.div>
@@ -184,7 +184,7 @@ export default function Home() {
                                             </span>
                                         </div>
                                         <div className="mt-2 flex items-center justify-between">
-                                            <p className="text-sm font-medium text-gray-500 dark:text-gray-400">${product.price.toFixed(2)}</p>
+                                            <p className="text-sm font-medium text-gray-500 dark:text-gray-400"><span className="text-[1.2em] font-medium mr-[1px] inline-block -translate-y-[0.05em]">৳</span>{product.price.toFixed(2)}</p>
                                         </div>
                                         <div className="mt-4 pt-4 border-t border-gray-50 dark:border-gray-800">
                                             <button 
@@ -193,7 +193,7 @@ export default function Home() {
                                                     navigate('/cart');
                                                 }}
                                                 disabled={!inStock}
-                                                className="w-full flex justify-center items-center gap-2 rounded-full bg-black dark:bg-white px-4 py-2 text-sm font-semibold text-white dark:text-black shadow-sm hover:bg-gray-800 dark:hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                                className="w-full flex justify-center items-center gap-2 rounded-full bg-black dark:bg-white px-4 py-2 text-sm font-semibold text-white dark:text-black shadow-sm hover:bg-gray-800 dark:hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors active:scale-95"
                                             >
                                                 {inStock ? "Shop Now" : "Out of Stock"}
                                             </button>
@@ -204,7 +204,7 @@ export default function Home() {
                         })}
                     </div>
                     <div className="mt-12 flex justify-center md:hidden">
-                        <Link to="/products" className="inline-flex items-center justify-center rounded-full bg-white dark:bg-gray-900 px-8 py-3 text-sm font-semibold text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors w-full">
+                        <Link to="/products" className="inline-flex items-center justify-center rounded-full bg-white dark:bg-gray-900 px-8 py-3 text-sm font-semibold text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors w-full active:scale-95">
                             View All Products
                         </Link>
                     </div>
@@ -221,7 +221,7 @@ export default function Home() {
                     <form className="mx-auto max-w-md flex gap-x-4" onSubmit={(e) => e.preventDefault()}>
                         <label htmlFor="email-address" className="sr-only">Email address</label>
                         <input id="email-address" name="email" type="email" autoComplete="email" required className="min-w-0 flex-auto rounded-full border-0 bg-white/5 px-6 py-3.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-white sm:text-sm sm:leading-6 placeholder:text-gray-500" placeholder="Enter your email" />
-                        <button type="submit" className="flex-none rounded-full bg-white px-8 py-3.5 text-sm font-semibold text-black shadow-sm hover:bg-gray-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white transition-colors">
+                        <button type="submit" className="flex-none rounded-full bg-white px-8 py-3.5 text-sm font-semibold text-black shadow-sm hover:bg-gray-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white transition-colors active:scale-95">
                             Subscribe
                         </button>
                     </form>

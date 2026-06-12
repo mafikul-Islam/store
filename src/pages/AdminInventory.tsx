@@ -140,7 +140,7 @@ export default function AdminInventory() {
                         <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
                             <Link
                                 to="/admin/add"
-                                className="inline-flex items-center gap-2 rounded-md bg-black dark:bg-white px-3 py-2 text-center text-sm font-semibold text-white dark:text-black shadow-sm hover:bg-gray-800 dark:hover:bg-gray-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+                                className="inline-flex items-center gap-2 rounded-md bg-black dark:bg-white px-3 py-2 text-center text-sm font-semibold text-white dark:text-black shadow-sm hover:bg-gray-800 dark:hover:bg-gray-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black active:scale-95"
                             >
                                 <Plus className="h-4 w-4" />
                                 Add product
@@ -199,7 +199,7 @@ export default function AdminInventory() {
                                                             step="0.01"
                                                             value={product.price}
                                                             onChange={(e) => handlePriceChange(product.id, e.target.value)}
-                                                            className="block w-24 rounded-md border-0 py-1.5 px-3 text-gray-900 dark:text-white dark:bg-gray-800 shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-inset focus:ring-black dark:focus:ring-white sm:text-sm sm:leading-6"
+                                                            className="block w-24 rounded-md border-0 py-1.5 px-3 text-gray-900 dark:text-white dark:bg-gray-800 shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-inset focus:ring-black dark:focus:ring-white sm:text-sm sm:leading-6 active:scale-95"
                                                         />
                                                     </td>
                                                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
@@ -207,7 +207,7 @@ export default function AdminInventory() {
                                                             type="number" 
                                                             value={product.stock}
                                                             onChange={(e) => handleStockChange(product.id, e.target.value)}
-                                                            className="block w-20 rounded-md border-0 py-1.5 px-3 text-gray-900 dark:text-white dark:bg-gray-800 shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-inset focus:ring-black dark:focus:ring-white sm:text-sm sm:leading-6"
+                                                            className="block w-20 rounded-md border-0 py-1.5 px-3 text-gray-900 dark:text-white dark:bg-gray-800 shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-inset focus:ring-black dark:focus:ring-white sm:text-sm sm:leading-6 active:scale-95"
                                                         />
                                                     </td>
                                                     <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">

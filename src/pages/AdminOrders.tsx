@@ -111,8 +111,7 @@ export default function AdminOrders() {
                                                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
                                                         {new Date(order.createdAt).toLocaleDateString()}
                                                     </td>
-                                                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-900 dark:text-white font-medium">
-                                                        ${order.total.toFixed(2)}
+                                                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-900 dark:text-white font-medium"><span className="text-[1.2em] font-medium mr-[1px] inline-block -translate-y-[0.05em]">৳</span>{order.total.toFixed(2)}
                                                     </td>
                                                     <td className="whitespace-nowrap px-3 py-4 text-sm">
                                                         <select
